@@ -1,0 +1,282 @@
+﻿@model LoginForm.Models.StudentsRegistration
+@using System.IO
+
+
+@{
+    ViewData["Title"] = "Student Profile";
+    Layout = null; 
+}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Student Profile - @Model.FirstName</title>
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    
+    <style>
+        :root {
+            --bg-color: #f0fff4;       
+            --card-bg: #ffffff;
+            --primary-green: #38a169;  
+            --dark-green: #22543d;     
+            --text-color: #2d3748;     
+            --border-color: #e2e8f0;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            color: var(--text-color);
+            padding-bottom: 3rem;
+        }
+
+        .header-bar {
+            background-color: var(--dark-green);
+            color: white;
+            padding: 1rem 2rem;
+            display: flex;
+            align-items: center;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+
+        .back-btn {
+            color: white;
+            text-decoration: none;
+            margin-right: 1.5rem;
+            font-size: 1.2rem;
+            transition: color 0.2s;
+        }
+
+        .back-btn:hover { color: var(--primary-green); }
+
+        .profile-container {
+            max-width: 1000px;
+            margin: 2rem auto;
+        }
+
+        .section-card {
+            background-color: var(--card-bg);
+            border-radius: 12px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+            border-top: 4px solid var(--primary-green);
+        }
+
+        .section-title {
+            color: var(--dark-green);
+            font-weight: bold;
+            font-size: 1.25rem;
+            margin-bottom: 1.5rem;
+            border-bottom: 2px solid var(--bg-color);
+            padding-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .profile-header {
+            display: flex;
+            gap: 2rem;
+            align-items: center;
+        }
+
+        .profile-picture {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 4px solid var(--primary-green);
+            background-color: #e2e8f0;
+        }
+
+        .info-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .info-group {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .info-label {
+            font-size: 0.85rem;
+            color: #718096;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 0.25rem;
+        }
+
+        .info-value {
+            font-size: 1.05rem;
+            font-weight: 500;
+            color: var(--text-color);
+        }
+
+        .badge-status {
+            padding: 0.4rem 0.8rem;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: bold;
+        }
+        .badge-verified { background-color: #c6f6d5; color: #22543d; }
+        .badge-pending { background-color: #fed7d7; color: #822727; }
+
+        .document-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.5rem 1rem;
+            background-color: var(--bg-color);
+            color: var(--primary-green);
+            text-decoration: none;
+            border-radius: 6px;
+            border: 1px solid var(--primary-green);
+            font-weight: 600;
+            transition: all 0.2s;
+        }
+        .document-link:hover { background-color: var(--primary-green); color: white; }
+
+    </style>
+</head>
+<body>
+
+    <div class="header-bar">
+        <a href="javascript:history.back()" class="back-btn"><i class="fas fa-arrow-left"></i></a>
+        <h3 class="m-0">Student Profile Record</h3>
+    </div>
+
+    <div class="container profile-container">
+        
+        <div class="section-card profile-header">
+            <img src="@(string.IsNullOrEmpty(Model.ProfilePicture) ? "https://via.placeholder.com/150" : $"/MyImages/{System.IO.Path.GetFileName(Model.ProfilePicture)}")" class="profile-picture" alt="Profile Picture" />
+            <div>
+                <h2 style="color: var(--dark-green); margin-bottom: 0.25rem;">@Model.FirstName @Model.MiddleName @Model.LastName</h2>
+                <p class="text-muted mb-2">Registration ID: <strong>#@Model.RegistrationId</strong> | Program: <strong>@Model.Program</strong></p>
+                
+                @if (Model.EmailVerifed)
+                {
+                    <span class="badge-status badge-verified"><i class="fas fa-check-circle me-1"></i> Email Verified</span>
+                }
+                else
+                {
+                    <span class="badge-status badge-pending"><i class="fas fa-exclamation-circle me-1"></i> Email Pending Verification</span>
+                }
+            </div>
+        </div>
+
+        <div class="section-card">
+            <div class="section-title"><i class="fas fa-user"></i> Personal Information</div>
+            <div class="info-grid">
+                <div class="info-group">
+                    <span class="info-label">Date of Birth</span>
+                    <span class="info-value">@Model.DataOfBirth.ToString("dd MMM yyyy")</span>
+                </div>
+                <div class="info-group">
+                    <span class="info-label">Gender</span>
+                    <span class="info-value">@Model.Gender</span>
+                </div>
+                <div class="info-group">
+                    <span class="info-label">Blood Group</span>
+                    <span class="info-value">@Model.BloodGroup</span>
+                </div>
+                <div class="info-group">
+                    <span class="info-label">Nationality</span>
+                    <span class="info-value">@Model.Nationality</span>
+                </div>
+                <div class="info-group">
+                    <span class="info-label">Category</span>
+                    <span class="info-value">@Model.Category</span>
+                </div>
+                <div class="info-group">
+                    <span class="info-label">Govt ID Type</span>
+                    <span class="info-value">@Model.GovtIdType</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="section-card">
+            <div class="section-title"><i class="fas fa-address-book"></i> Contact & Address</div>
+            <div class="info-grid">
+                <div class="info-group">
+                    <span class="info-label">Email Address</span>
+                    <span class="info-value">@Model.Email</span>
+                </div>
+                <div class="info-group">
+                    <span class="info-label">Phone Number</span>
+                    <span class="info-value">@Model.Phone</span>
+                </div>
+                <div class="info-group">
+                    <span class="info-label">City & State</span>
+                    <span class="info-value">@Model.City, @Model.State (@Model.Pincode)</span>
+                </div>
+                <div class="info-group" style="grid-column: 1 / -1;">
+                    <span class="info-label">Permanent Address</span>
+                    <span class="info-value">@Model.PermanentAddress</span>
+                </div>
+                @if (!string.IsNullOrEmpty(Model.AlternateAddress))
+                {
+                    <div class="info-group" style="grid-column: 1 / -1;">
+                        <span class="info-label">Alternate Address</span>
+                        <span class="info-value">@Model.AlternateAddress</span>
+                    </div>
+                }
+            </div>
+        </div>
+
+        <div class="section-card">
+            <div class="section-title"><i class="fas fa-users"></i> Guardian Information</div>
+            <div class="info-grid">
+                <div class="info-group">
+                    <span class="info-label">Parent/Guardian Name</span>
+                    <span class="info-value">@Model.ParentName</span>
+                </div>
+                <div class="info-group">
+                    <span class="info-label">Relation</span>
+                    <span class="info-value">@Model.Relation</span>
+                </div>
+                <div class="info-group">
+                    <span class="info-label">Parent Phone</span>
+                    <span class="info-value">@Model.ParentPhone</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="section-card">
+            <div class="section-title"><i class="fas fa-graduation-cap"></i> Academic & Documents</div>
+            <div class="info-grid">
+                <div class="info-group">
+                    <span class="info-label">Previous School</span>
+                    <span class="info-value">@Model.SchoolName</span>
+                </div>
+                <div class="info-group">
+                    <span class="info-label">Enrolled Program</span>
+                    <span class="info-value">@Model.Program</span>
+                </div>
+                <div class="info-group" style="grid-column: 1 / -1; display: flex; flex-direction: row; gap: 1rem; margin-top: 1rem;">
+                    @if (!string.IsNullOrEmpty(Model.Class10Marksheet))
+                    {
+                        <a href="@(string.IsNullOrEmpty(Model.Class10Marksheet) ? "#" : $"/MyDocuments/{System.IO.Path.GetFileName(Model.Class10Marksheet)}")" target="_blank" class="document-link">
+                            <i class="fas fa-file-pdf"></i> View Class 10 Marksheet
+                        </a>
+                    }
+                    @if (!string.IsNullOrEmpty(Model.Class12Marksheet))
+                    {
+                        <a href="@(string.IsNullOrEmpty(Model.Class12Marksheet) ? "#" : $"/MyDocuments/{System.IO.Path.GetFileName(Model.Class12Marksheet)}")" target="_blank" class="document-link">
+                            <i class="fas fa-file-pdf"></i> View Class 12 Marksheet
+                        </a>
+                    }
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+</body>
+</html>

@@ -1,0 +1,59 @@
+﻿@{
+    ViewData["Title"] = "Verify OTP";
+}
+
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-header">
+                    <h3>Verify Your Account</h3>
+                </div>
+                <div class="card-body">
+
+                    @if (ViewBag.ErrorMessage != null)
+                    {
+                        <div class="alert alert-danger">@ViewBag.ErrorMessage</div>
+                    }
+
+                    <p>We have sent a 6-digit code to <strong>@ViewBag.Email</strong></p>
+
+                    <form asp-action="VerifyOtp" method="post" id="otpForm">
+
+                        <input type="hidden" name="email" value="@ViewBag.Email" />
+
+                        <div class="form-group mb-3">
+                            <label>Enter OTP Code</label>
+                            <input type="text" name="otp" class="form-control" maxlength="6" placeholder="123456" required />
+                        </div>
+
+                        <div class="cf-turnstile" data-sitekey="0x4AAAAAACds0hrlKejyS5lh"></div>
+
+                        <input type="hidden" name="captchaToken" id="captchaTokenInput" />
+
+                        <button type="submit" class="btn btn-primary w-100">Verify & Login</button>
+                    </form>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
+
+<script>
+    // Intercept form submission to get the Captcha Token
+    document.getElementById("otpForm").addEventListener("submit", function(event) {
+        // Get the token from the Turnstile widget
+        var token = turnstile.getResponse();
+
+        if (!token) {
+            event.preventDefault(); // Stop form submission
+            alert("Please complete the Captcha verification.");
+        } else {
+            // Put the token into the hidden input so the controller receives it
+            document.getElementById("captchaTokenInput").value = token;
+        }
+    });
+</script>

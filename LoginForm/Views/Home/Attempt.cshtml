@@ -1,0 +1,337 @@
+﻿@model LoginForm.ViewModels.AttemptExamViewModel
+
+@{
+    ViewData["Title"] = "Attempt Exam";
+    Layout = null;
+}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@Model.ExamName - Online Examination</title>
+    <style>
+        :root {
+            --bg-color: #f0fff4; /* Mint Cream */
+            --card-bg: #ffffff; /* White */
+            --primary-green: #38a169; /* Green 500 */
+            --dark-green: #22543d; /* Green 900 */
+            --border-color: #e2e8f0;
+            --hover-color: #c6f6d5;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            color: #2d3748;
+            margin: 0;
+            padding: 0;
+        }
+
+        /* --- Fixed Header with Timer --- */
+        .exam-header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            background-color: var(--dark-green);
+            color: white;
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            z-index: 100;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .timer-badge {
+            background-color: white;
+            color: var(--dark-green);
+            padding: 0.5rem 1rem;
+            border-radius: 4px;
+            font-weight: bold;
+            font-size: 1.1rem;
+            font-family: monospace;
+        }
+
+        /* --- Main Content --- */
+        .container {
+            max-width: 800px;
+            margin: 100px auto 4rem auto;
+            padding: 0 1rem;
+        }
+
+        /* --- Question Card Pagination Styles --- */
+        .question-card {
+            background-color: var(--card-bg);
+            border-radius: 8px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+            border-left: 5px solid var(--primary-green);
+            display: none; /* Hide all by default */
+        }
+
+        /* Only show the active question with a fade-in effect */
+        .question-card.active {
+            display: block;
+            animation: fadeIn 0.4s ease-in-out;
+        }
+
+        @@keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .question-text {
+            font-size: 1.1rem;
+            font-weight: 600;
+            margin-bottom: 1.5rem;
+            color: var(--dark-green);
+        }
+
+        .options-grid {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .option-label {
+            display: flex;
+            align-items: center;
+            padding: 0.75rem;
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .option-label:hover {
+            background-color: var(--hover-color);
+            border-color: var(--primary-green);
+        }
+
+        input[type="radio"] {
+            margin-right: 1rem;
+            accent-color: var(--primary-green);
+            transform: scale(1.2);
+        }
+
+        /* --- Navigation Buttons --- */
+        .nav-area {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 1rem;
+            background-color: white;
+            padding: 1rem 2rem;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+        }
+
+        .btn-nav {
+            background-color: white;
+            color: var(--primary-green);
+            border: 2px solid var(--primary-green);
+            padding: 0.6rem 1.5rem;
+            border-radius: 6px;
+            font-size: 1rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .btn-nav:hover:not(:disabled) {
+            background-color: var(--primary-green);
+            color: white;
+        }
+
+        .btn-nav:disabled {
+            border-color: #cbd5e0;
+            color: #cbd5e0;
+            cursor: not-allowed;
+        }
+
+        .question-counter {
+            font-weight: bold;
+            color: var(--dark-green);
+        }
+
+        /* --- Submit Button --- */
+        .submit-area {
+            text-align: right;
+            display: none; /* Hidden until the last question */
+        }
+
+        .btn-submit {
+            background-color: var(--primary-green);
+            color: white;
+            padding: 0.6rem 2rem;
+            border: none;
+            border-radius: 6px;
+            font-size: 1.1rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        .btn-submit:hover {
+            background-color: #2f855a;
+        }
+    </style>
+
+    <script>
+        // --- Timer Logic ---
+        function startTimer(duration, display) {
+            var timer = duration * 60, minutes, seconds;
+            setInterval(function () {
+                minutes = parseInt(timer / 60, 10);
+                seconds = parseInt(timer % 60, 10);
+
+                minutes = minutes < 10 ? "0" + minutes : minutes;
+                seconds = seconds < 10 ? "0" + seconds : seconds;
+
+                display.textContent = minutes + ":" + seconds;
+
+                if (--timer < 0) {
+                    // Auto-submit when time is up
+                    document.getElementById("examForm").submit();
+                }
+            }, 1000);
+        }
+
+        // --- Pagination Logic ---
+        let currentQuestionIndex = 0;
+        let totalQuestions = @Model.Questions.Count;
+
+        function changeQuestion(direction) {
+            // 1. Hide current question
+            document.getElementById('q-' + currentQuestionIndex).classList.remove('active');
+            
+            // 2. Update index
+            currentQuestionIndex += direction;
+            
+            // 3. Show new question
+            document.getElementById('q-' + currentQuestionIndex).classList.add('active');
+            
+            // 4. Update UI Elements
+            updateUI();
+        }
+
+        function updateUI() {
+            // Update Counter
+            document.getElementById('currentQNum').innerText = currentQuestionIndex + 1;
+
+            const btnPrev = document.getElementById('btnPrev');
+            const btnNext = document.getElementById('btnNext');
+            const submitArea = document.getElementById('submitArea');
+
+            // Handle Previous Button State
+            if (currentQuestionIndex === 0) {
+                btnPrev.disabled = true;
+            } else {
+                btnPrev.disabled = false;
+            }
+
+            // Handle Next / Submit Button States
+            if (currentQuestionIndex === totalQuestions - 1) {
+                btnNext.style.display = 'none';
+                submitArea.style.display = 'block';
+            } else {
+                btnNext.style.display = 'block';
+                submitArea.style.display = 'none';
+            }
+        }
+
+        window.onload = function () {
+            // Initialize Timer
+            var minutes = @Model.DurationMinutes;
+            var display = document.querySelector('#time');
+            startTimer(minutes, display);
+
+            // Initialize Pagination UI
+            if (totalQuestions > 0) {
+                updateUI();
+            }
+
+            // Prevent accidental back navigation
+            history.pushState(null, null, location.href);
+            window.onpopstate = function () {
+                history.go(1);
+            };
+        };
+    </script>
+</head>
+<body>
+
+    <div class="exam-header">
+        <div style="font-size: 1.2rem; font-weight: bold;">@Model.ExamName</div>
+        <div class="timer-badge">Time Left: <span id="time">00:00</span></div>
+    </div>
+
+    <div class="container">
+        <form asp-action="Submit" method="post" id="examForm">
+
+            <input type="hidden" asp-for="ExamId" />
+            <input type="hidden" asp-for="StudentEmail" />
+
+            <div id="questionsContainer">
+                @for (int i = 0; i < Model.Questions.Count; i++)
+                {
+                    // Add the 'active' class only to the first question initially
+                    <div class="question-card @(i == 0 ? "active" : "")" id="q-@i">
+                        <input type="hidden" asp-for="Questions[i].QuestionId" />
+
+                        <div class="question-text">
+                            Q@(i + 1). @Model.Questions[i].Text
+                        </div>
+
+                        <div class="options-grid">
+                            <label class="option-label">
+                                <input type="radio" asp-for="Questions[i].SelectedOption" value="A" />
+                                <span>@Model.Questions[i].OptionA</span>
+                            </label>
+
+                            <label class="option-label">
+                                <input type="radio" asp-for="Questions[i].SelectedOption" value="B" />
+                                <span>@Model.Questions[i].OptionB</span>
+                            </label>
+
+                            <label class="option-label">
+                                <input type="radio" asp-for="Questions[i].SelectedOption" value="C" />
+                                <span>@Model.Questions[i].OptionC</span>
+                            </label>
+
+                            <label class="option-label">
+                                <input type="radio" asp-for="Questions[i].SelectedOption" value="D" />
+                                <span>@Model.Questions[i].OptionD</span>
+                            </label>
+                        </div>
+                    </div>
+                }
+            </div>
+
+            <div class="nav-area">
+                <button type="button" class="btn-nav" id="btnPrev" onclick="changeQuestion(-1)">
+                    &larr; Previous
+                </button>
+                
+                <span class="question-counter">
+                    Question <span id="currentQNum">1</span> of @Model.Questions.Count
+                </span>
+                
+                <button type="button" class="btn-nav" id="btnNext" onclick="changeQuestion(1)">
+                    Next &rarr;
+                </button>
+
+                <div class="submit-area" id="submitArea">
+                    <button type="submit" class="btn-submit" onclick="return confirm('Are you sure you want to submit your exam? You cannot change your answers after submitting.');">
+                        Submit Exam
+                    </button>
+                </div>
+            </div>
+
+        </form>
+    </div>
+</body>
+</html>

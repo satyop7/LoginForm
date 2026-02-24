@@ -1,0 +1,202 @@
+﻿@model LoginForm.Models.GenerateAdmitCardViewModel
+
+@{
+    ViewData["Title"] = "Generate Admit Cards";
+    Layout = null;
+}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Generate Admit Cards</title>
+    <style>
+        :root {
+            --bg-color: #f0fff4; /* Mint Cream */
+            --card-bg: #ffffff;
+            --primary-green: #38a169; /* Green 500 */
+            --dark-green: #22543d;
+            --border-color: #e2e8f0;
+            --hover-row: #f0fff4;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            color: #2d3748;
+            padding: 2rem;
+            display: flex;
+            justify-content: center;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 900px;
+            background-color: var(--card-bg);
+            padding: 2.5rem;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+            border-top: 6px solid var(--primary-green);
+        }
+
+        h2 {
+            color: var(--dark-green);
+            margin-top: 0;
+            margin-bottom: 1.5rem;
+            border-bottom: 2px solid var(--bg-color);
+            padding-bottom: 0.5rem;
+        }
+
+        .alert-success {
+            background-color: #c6f6d5;
+            color: #22543d;
+            padding: 1rem;
+            border-radius: 6px;
+            margin-bottom: 1.5rem;
+            border: 1px solid #9ae6b4;
+        }
+
+        /* Table Styling */
+        .admit-card-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 2rem;
+        }
+
+            .admit-card-table th {
+                background-color: var(--primary-green);
+                color: white;
+                text-align: left;
+                padding: 0.75rem;
+                font-weight: 600;
+            }
+
+            .admit-card-table td {
+                padding: 0.75rem;
+                border-bottom: 1px solid var(--border-color);
+                vertical-align: middle;
+            }
+
+            .admit-card-table tr:hover {
+                background-color: var(--hover-row);
+            }
+
+        /* Checkbox Styling */
+        input[type="checkbox"] {
+            width: 18px;
+            height: 18px;
+            cursor: pointer;
+            accent-color: var(--primary-green);
+        }
+
+        /* Buttons */
+        .actions {
+            display: flex;
+            justify-content: flex-end;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .btn-send {
+            background-color: var(--primary-green);
+            color: white;
+            padding: 0.75rem 2rem;
+            border: none;
+            border-radius: 6px;
+            font-size: 1rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+            .btn-send:hover {
+                background-color: #2f855a;
+            }
+
+        .select-all-label {
+            color: var(--primary-green);
+            font-weight: bold;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+    </style>
+
+    <script>
+        // Simple JS to handle "Select All" functionality
+        function toggleAll(source) {
+            var checkboxes = document.querySelectorAll('.row-checkbox');
+            for(var i=0; i<checkboxes.length; i++) {
+                checkboxes[i].checked = source.checked;
+            }
+        }
+    </script>
+</head>
+<body>
+
+    <div class="container">
+        <h2>Issue Admit Cards</h2>
+
+        @if (TempData["SuccessMessage"] != null)
+        {
+            <div class="alert-success">
+                @TempData["SuccessMessage"]
+            </div>
+        }
+
+        <form asp-action="GenerateAdmitCard" method="post">
+
+            @if (Model.PendingAdmitCards.Count == 0)
+            {
+                <div style="text-align:center; padding: 2rem; color:#718096;">
+                    <p>No pending course exams found.</p>
+                    <p style="font-size:0.9em;">All scheduled exams have already had their admit cards sent.</p>
+                </div>
+            }
+            else
+            {
+                <div style="text-align: right; margin-bottom: 1rem;">
+                    <label class="select-all-label">
+                        <input type="checkbox" onclick="toggleAll(this)"> Select All
+                    </label>
+                </div>
+
+                <table class="admit-card-table">
+                    <thead>
+                        <tr>
+                            <th style="width: 50px; text-align: center;">#</th>
+                            <th>Program / Course</th>
+                            <th>Scheduled Date</th>
+                            <th>Exam ID</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @for (int i = 0; i < Model.PendingAdmitCards.Count; i++)
+                        {
+                            <tr>
+                                <td style="text-align: center;">
+                                    <input type="checkbox" class="row-checkbox" asp-for="PendingAdmitCards[i].IsSelected" />
+
+                                    <input type="hidden" asp-for="PendingAdmitCards[i].ExamId" />
+                                    <input type="hidden" asp-for="PendingAdmitCards[i].Program" />
+                                    <input type="hidden" asp-for="PendingAdmitCards[i].ExamDate" />
+                                </td>
+                                <td><strong>@Model.PendingAdmitCards[i].Program</strong></td>
+                                <td>@Model.PendingAdmitCards[i].ExamDate.ToString("MMM dd, yyyy")</td>
+                                <td style="color:#718096; font-size:0.9em;">#@Model.PendingAdmitCards[i].ExamId</td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+
+                <div class="actions">
+                    <button type="submit" class="btn-send">Send Bulk Admit Cards</button>
+                </div>
+            }
+        </form>
+    </div>
+
+</body>
+</html>

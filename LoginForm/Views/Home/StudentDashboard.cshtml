@@ -1,0 +1,373 @@
+﻿@model LoginForm.ViewModels.StudentDashboardViewModel
+@using System.IO
+
+@{
+    ViewData["Title"] = "Student Dashboard";
+    Layout = null;
+}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Student Dashboard</title>
+    <style>
+        :root {
+            --bg-color: #f0fff4; /* Mint Cream */
+            --card-bg: #ffffff; /* White */
+            --primary-green: #38a169; /* Green 500 */
+            --dark-green: #22543d; /* Green 900 */
+            --text-color: #2d3748; /* Dark Grey */
+            --border-color: #e2e8f0;
+            --success-color: #48bb78;
+            --fail-color: #f56565;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            font-family: 'Segoe UI', sans-serif;
+            color: var(--text-color);
+            margin: 0;
+            padding: 2rem;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: 300px 1fr; /* Sidebar/Profile vs Main Content */
+            gap: 2rem;
+        }
+
+        /* --- Profile Card --- */
+        .profile-card {
+            background-color: var(--card-bg);
+            border-radius: 12px;
+            padding: 2rem;
+            text-align: center;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+            border-top: 5px solid var(--primary-green);
+            height: fit-content;
+        }
+
+        .profile-img {
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            background-color: #e2e8f0;
+            margin-bottom: 1rem;
+            object-fit: cover;
+            border: 3px solid var(--primary-green);
+        }
+
+        .profile-name {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: var(--dark-green);
+            margin: 0;
+        }
+
+        .profile-meta {
+            color: #718096;
+            font-size: 0.9rem;
+            margin-top: 0.5rem;
+        }
+
+        .info-list {
+            text-align: left;
+            margin-top: 2rem;
+            border-top: 1px solid var(--border-color);
+            padding-top: 1rem;
+        }
+
+        .info-item {
+            margin-bottom: 0.8rem;
+            font-size: 0.95rem;
+        }
+
+        .info-label {
+            font-weight: bold;
+            color: var(--dark-green);
+            display: block;
+            font-size: 0.8rem;
+        }
+
+        /* --- Main Content Area --- */
+        .main-content {
+            display: flex;
+            flex-direction: column;
+            gap: 2rem;
+        }
+
+        .section-title {
+            font-size: 1.25rem;
+            font-weight: bold;
+            color: var(--dark-green);
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        /* --- Active Exams Area --- */
+        .exams-container {
+            background-color: var(--card-bg);
+            border-radius: 12px;
+            padding: 2rem;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+            min-height: 200px;
+            display: flex; /* Helps center the "No Data" text */
+            flex-direction: column;
+        }
+
+        .no-data-msg {
+            margin: auto; /* Centers vertically and horizontally */
+            color: #a0aec0;
+            font-style: italic;
+            text-align: center;
+        }
+
+        .exam-card {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            margin-bottom: 1rem;
+            transition: transform 0.2s;
+        }
+
+            .exam-card:hover {
+                transform: translateY(-2px);
+                border-color: var(--primary-green);
+            }
+
+        .exam-date-badge {
+            background-color: #e6fffa;
+            color: var(--dark-green);
+            padding: 0.25rem 0.75rem;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: bold;
+        }
+
+        .btn-start {
+            background-color: var(--primary-green);
+            color: white;
+            padding: 0.6rem 1.5rem;
+            text-decoration: none;
+            border-radius: 6px;
+            font-weight: bold;
+            display: inline-block;
+        }
+
+            .btn-start.disabled {
+                background-color: #cbd5e0;
+                cursor: not-allowed;
+                pointer-events: none;
+            }
+
+        /* --- Results Area --- */
+        .results-container {
+            background-color: var(--card-bg);
+            border-radius: 12px;
+            padding: 2rem;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+        }
+
+        .results-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+            .results-table th {
+                text-align: left;
+                padding: 1rem;
+                border-bottom: 2px solid var(--bg-color);
+                color: var(--dark-green);
+            }
+
+            .results-table td {
+                padding: 1rem;
+                border-bottom: 1px solid var(--border-color);
+                vertical-align: middle;
+            }
+
+        .status-pass {
+            color: var(--success-color);
+            font-weight: bold;
+        }
+
+        .status-fail {
+            color: var(--fail-color);
+            font-weight: bold;
+        }
+
+        .score-circle {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background-color: var(--bg-color);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 0.8rem;
+            border: 2px solid var(--primary-green);
+        }
+
+        .btn-profile {
+                display: block;
+                width: 100%;
+                background-color: var(--bg-color);
+                color: var(--dark-green);
+                padding: 0.75rem;
+                text-align: center;
+                text-decoration: none;
+                border-radius: 6px;
+                font-weight: bold;
+                border: 2px solid var(--primary-green);
+                margin-top: 1.5rem;
+                transition: all 0.2s;
+        }
+
+        .btn-profile:hover {
+                    background-color: var(--primary-green);
+                    color: white;
+        }
+
+        /* Responsive */
+        @@media (max-width: 768px) {
+            .container {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+
+        <div class="profile-card">
+            <img src="@(string.IsNullOrEmpty(Model.ProfilePicture)
+                                                                     ? "https://via.placeholder.com/100"
+                                                                     : $"/MyImages/{System.IO.Path.GetFileName(Model.ProfilePicture)}")"
+                 class="profile-img"
+                 alt="Profile" />
+            
+            <h2 class="profile-name">@Model.FirstName @Model.LastName</h2>
+            <div class="profile-meta">@Model.Program Student</div>
+            <div class="profile-meta">@Model.SchoolName</div>
+
+            <div class="info-list">
+                <div class="info-item">
+                    <span class="info-label">Email</span>
+                    @Model.Email
+                </div>
+                <div class="info-item">
+                    <span class="info-label">Phone</span>
+                    @(Model.Phone ?? "N/A")
+                </div>
+                <div class="info-item">
+                    <span class="info-label">Location</span>
+                    @(Model.City ?? "Unknown City")
+                </div>
+            </div>
+
+            <a asp-controller="Home"
+                   asp-action="StudentDetails"
+                   asp-route-email="@Model.Email"
+                   class="btn-profile">
+                View Full Profile
+            </a>
+
+        </div>
+
+        <div class="main-content">
+
+            <div>
+                <div class="section-title">📅 Upcoming Exams</div>
+                <div class="exams-container">
+                    @if (Model.ActiveExams == null || Model.ActiveExams.Count == 0)
+                    {
+                        <div class="no-data-msg">
+                            <h3>No test available</h3>
+                            <p>You have no pending exams at the moment.</p>
+                        </div>
+                    }
+                    else
+                    {
+                        @foreach (var exam in Model.ActiveExams)
+                        {
+                            <div class="exam-card">
+                                <div>
+                                    <h3 style="margin:0 0 0.5rem 0;">@exam.ExamName</h3>
+                                    <span class="exam-date-badge">Opens: @exam.ExamDate.ToString("MMM dd, yyyy")</span>
+                                </div>
+
+                                @if (exam.IsOpenToday)
+                                {
+                                    <a href="/Home/Attempt?token=@exam.SecureToken" class="btn-start">Start Exam</a>
+                                }
+                                else
+                                {
+                                    <a href="#" class="btn-start disabled">Starts Soon</a>
+                                }
+                            </div>
+                        }
+                    }
+                </div>
+            </div>
+
+            <div>
+                <div class="section-title">🏆 Recent Results</div>
+                <div class="results-container">
+                    @if (Model.PastResults == null || Model.PastResults.Count == 0)
+                    {
+                        <p style="text-align:center; color:#a0aec0;">No result history found.</p>
+                    }
+                    else
+                    {
+                        <table class="results-table">
+                            <thead>
+                                <tr>
+                                    <th>Total Qs</th>
+                                    <th>Correct</th>
+                                    <th>Percentage</th>
+                                    <th>Status</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var result in Model.PastResults)
+                                {
+                                    <tr>
+                                        <td>@result.TotalQuestions</td>
+                                        <td>@result.CorrectlyAnswered</td>
+                                        <td>
+                                            <div class="score-circle">@result.Percentage%</div>
+                                        </td>
+                                        <td>
+                                            @if (result.IsPassed)
+                                            {
+                                                <span class="status-pass">Passed</span>
+                                            }
+                                            else
+                                            {
+                                                <span class="status-fail">Failed</span>
+                                            }
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    }
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+</body>
+</html>

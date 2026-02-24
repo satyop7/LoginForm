@@ -1,0 +1,228 @@
+﻿@{
+    ViewData["Title"] = "Login";
+    Layout = null;
+}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Login</title>
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+
+    <style>
+            /* Greenish White Theme */
+            :root {
+                --bg-color: #f0fff4; /* Mint Cream */
+                --card-bg: #ffffff; /* White */
+                --primary-green: #38a169; /* Green 500 */
+                --dark-green: #22543d; /* Green 900 */
+                --light-green-accent: #c6f6d5; /* Green 100 */
+                --text-color: #2d3748; /* Dark Grey */
+                --input-border: #e2e8f0;
+                --error-color: #e53e3e;
+            }
+
+            body {
+                background-color: var(--bg-color);
+                font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                height: 100vh;
+                margin: 0;
+                position: relative; /* Needed for the absolute header */
+            }
+
+            /* --- NEW HEADER STYLES --- */
+            .login-page-header {
+                position: absolute;
+                top: 0;
+                left: 0;
+                width: 100%;
+                padding: 1rem 2.5rem;
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                box-sizing: border-box;
+                background-color: transparent; /* Blends with the background */
+            }
+
+            .header-brand {
+                display: flex;
+                align-items: center;
+                color: var(--dark-green);
+            }
+
+                .header-brand i {
+                    color: var(--primary-green);
+                    margin-right: 0.75rem;
+                }
+
+                .header-brand h2 {
+                    margin: 0;
+                    font-size: 1.5rem;
+                }
+
+            .btn-apply {
+                background-color: var(--primary-green);
+                color: white;
+                padding: 0.6rem 1.25rem;
+                border-radius: 6px;
+                text-decoration: none;
+                font-weight: 600;
+                display: flex;
+                align-items: center;
+                transition: background-color 0.2s;
+                box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            }
+
+                .btn-apply i {
+                    margin-right: 0.5rem;
+                }
+
+                .btn-apply:hover {
+                    background-color: #2f855a;
+                    color: white;
+                }
+            /* ------------------------- */
+
+            .login-card {
+                background-color: var(--card-bg);
+                padding: 2.5rem;
+                border-radius: 12px;
+                box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+                width: 100%;
+                max-width: 380px;
+                border-top: 6px solid var(--primary-green);
+                margin-top: 60px; /* Gives a little breathing room if screen is small */
+            }
+
+            .login-header {
+                text-align: center;
+                margin-bottom: 2rem;
+            }
+
+                .login-header h2 {
+                    color: var(--dark-green);
+                    margin: 0;
+                    font-size: 1.8rem;
+                }
+
+                .login-header p {
+                    color: #718096;
+                    margin-top: 0.5rem;
+                    font-size: 0.95rem;
+                }
+
+            .form-group {
+                margin-bottom: 1.25rem;
+            }
+
+            .form-label {
+                display: block;
+                margin-bottom: 0.5rem;
+                color: var(--dark-green);
+                font-weight: 600;
+                font-size: 0.9rem;
+            }
+
+            .form-control {
+                width: 100%;
+                padding: 0.75rem;
+                border: 1px solid var(--input-border);
+                border-radius: 8px;
+                font-size: 1rem;
+                transition: all 0.2s;
+                box-sizing: border-box;
+            }
+
+                .form-control:focus {
+                    outline: none;
+                    border-color: var(--primary-green);
+                    box-shadow: 0 0 0 3px var(--light-green-accent);
+                }
+
+            .btn-submit {
+                width: 100%;
+                background-color: var(--primary-green);
+                color: white;
+                padding: 0.75rem;
+                border: none;
+                border-radius: 8px;
+                font-size: 1rem;
+                font-weight: 600;
+                cursor: pointer;
+                transition: background-color 0.2s;
+                margin-top: 1rem;
+            }
+
+                .btn-submit:hover {
+                    background-color: #2f855a;
+                }
+
+            .alert-error {
+                background-color: #fff5f5;
+                border-left: 4px solid var(--error-color);
+                color: var(--error-color);
+                padding: 0.75rem;
+                margin-bottom: 1.5rem;
+                border-radius: 4px;
+                font-size: 0.9rem;
+            }
+    </style>
+</head>
+<body>
+
+    <header class="login-page-header">
+        <div class="header-brand">
+            <i class="fas fa-university fa-2x"></i>
+            <h2>Portal Login</h2>
+        </div>
+        <a href="/Home/Index" class="btn-apply">
+            <i class="fas fa-user-plus"></i> Student Application Form
+        </a>
+    </header>
+
+    <div class="login-card">
+        <div class="login-header">
+            <h2>Welcome Back</h2>
+            <p>Please enter your details</p>
+        </div>
+
+        @if (ViewBag.Error != null)
+        {
+            <div class="alert-error">
+                @ViewBag.Error
+            </div>
+        }
+
+        <form action="/Home/Login" method="post">
+
+            <div class="form-group">
+                <label for="email" class="form-label">Email Address</label>
+                <input type="email" id="email" name="email" class="form-control" placeholder="name@example.com" required />
+            </div>
+
+            <div class="form-group">
+                <label for="password" class="form-label">Password</label>
+                <input type="password" id="password" name="password" class="form-control" placeholder="********" required />
+            </div>
+
+            <div class="form-group">
+                <label for="role" class="form-label">I am a...</label>
+                <select id="role" name="role" class="form-control" required>
+                    <option value="" disabled selected>-- Select Role --</option>
+                    <option value="Student">Student</option>
+                    <option value="Admin">Admin</option>
+                </select>
+            </div>
+
+            <button type="submit" class="btn-submit">Sign In</button>
+        </form>
+    </div>
+
+</body>
+</html>

@@ -1,0 +1,628 @@
+﻿@{
+    ViewData["Title"] = "Student Registration Form";
+}
+
+<style>
+    body {
+        background: linear-gradient(135deg, #f0f9f7 0%, #e8f5f1 100%);
+        min-height: 100vh;
+        padding: 20px 0;
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+
+    .registration-container {
+        background: white;
+        border-radius: 12px;
+        box-shadow: 0 8px 32px rgba(34, 139, 34, 0.1);
+        margin: 30px auto;
+        padding: 40px;
+        max-width: 1000px;
+    }
+
+    .registration-header {
+        background: linear-gradient(135deg, #228B22 0%, #32CD32 100%);
+        color: white;
+        padding: 30px;
+        margin: -40px -40px 30px -40px;
+        border-radius: 12px 12px 0 0;
+        text-align: center;
+    }
+
+    .registration-header h1 {
+        font-size: 2.5rem;
+        font-weight: 600;
+        margin-bottom: 10px;
+    }
+
+    .registration-header p {
+        font-size: 1.1rem;
+        opacity: 0.95;
+    }
+
+    .form-section {
+        margin-bottom: 35px;
+        padding-bottom: 25px;
+        border-bottom: 2px solid #e8f5f1;
+    }
+
+    .form-section:last-of-type {
+        border-bottom: none;
+    }
+
+    .section-title {
+        color: #228B22;
+        font-size: 1.5rem;
+        font-weight: 600;
+        margin-bottom: 20px;
+        display: flex;
+        align-items: center;
+    }
+
+    .section-title::before {
+        content: '';
+        width: 4px;
+        height: 30px;
+        background: #32CD32;
+        margin-right: 12px;
+        border-radius: 2px;
+    }
+
+    .form-label {
+        color: #228B22;
+        font-weight: 600;
+        margin-bottom: 8px;
+    }
+
+    .form-control, .form-select {
+        border: 2px solid #e0e0e0;
+        border-radius: 6px;
+        padding: 10px 12px;
+        transition: all 0.3s ease;
+    }
+
+    .form-control:focus, .form-select:focus {
+        border-color: #228B22;
+        box-shadow: 0 0 0 0.2rem rgba(34, 139, 34, 0.15);
+    }
+
+    .form-control:disabled, .form-select:disabled {
+        background: #9f9f9f;
+        color: #999;
+        cursor: not-allowed;
+        border-color: #ddd;
+    }
+
+    .form-control.is-invalid, .form-select.is-invalid {
+        border-color: #dc3545;
+        background-image: none;
+    }
+
+    .invalid-feedback {
+        color: #dc3545;
+        font-size: 0.875rem;
+        margin-top: 4px;
+        display: none;
+    }
+
+    .invalid-feedback.show {
+        display: block;
+    }
+
+    .valid-feedback {
+        color: #228B22;
+        font-size: 0.875rem;
+        margin-top: 4px;
+        display: block;
+    }
+
+    .optional-badge {
+        background: #32CD32;
+        color: white;
+        padding: 3px 8px;
+        border-radius: 4px;
+        font-size: 0.75rem;
+        margin-left: 8px;
+        font-weight: 600;
+    }
+
+    .btn-register {
+        background: linear-gradient(135deg, #228B22 0%, #32CD32 100%);
+        border: none;
+        color: white;
+        padding: 12px 40px;
+        font-size: 1.1rem;
+        font-weight: 600;
+        border-radius: 6px;
+        cursor: pointer;
+        transition: all 0.3s ease;
+    }
+
+    .btn-register:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 20px rgba(34, 139, 34, 0.3);
+        color: white;
+    }
+
+    .btn-register:disabled {
+        background: #cccccc;
+        cursor: not-allowed;
+        transform: none;
+    }
+
+    .btn-reset {
+        background: #f0f0f0;
+        border: 2px solid #228B22;
+        color: #228B22;
+        padding: 10px 30px;
+        font-size: 1rem;
+        font-weight: 600;
+        border-radius: 6px;
+        cursor: pointer;
+        margin-left: 10px;
+        transition: all 0.3s ease;
+    }
+
+    .btn-reset:hover {
+        background: #228B22;
+        color: white;
+    }
+
+    .password-strength {
+        margin-top: 8px;
+        padding: 8px 12px;
+        border-radius: 4px;
+        font-size: 0.875rem;
+        font-weight: 600;
+        display: none;
+    }
+
+    .password-strength.weak {
+        background: #ffe0e0;
+        color: #d9534f;
+        display: block;
+    }
+
+    .password-strength.medium {
+        background: #fff3cd;
+        color: #f0ad4e;
+        display: block;
+    }
+
+    .password-strength.strong {
+        background: #d4edda;
+        color: #228B22;
+        display: block;
+    }
+
+    .camera-container {
+        margin-top: 15px;
+        border: 2px dashed #32CD32;
+        border-radius: 8px;
+        padding: 20px;
+        text-align: center;
+        background: #f0f9f7;
+    }
+
+    #cameraFeed {
+        max-width: 100%;
+        width: 300px;
+        border-radius: 8px;
+        margin: 10px auto;
+        display: block;
+    }
+
+    #profileImage {
+        max-width: 200px;
+        max-height: 200px;
+        border-radius: 8px;
+        margin: 10px 0;
+    }
+
+    .btn-sm {
+        padding: 6px 12px;
+        font-size: 0.875rem;
+    }
+
+    .address-sync-label {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        cursor: pointer;
+        user-select: none;
+    }
+
+    .address-sync-label input {
+        cursor: pointer;
+    }
+
+    .file-upload-area {
+        border: 2px dashed #32CD32;
+        border-radius: 8px;
+        padding: 20px;
+        text-align: center;
+        background: #f0f9f7;
+        transition: all 0.3s ease;
+    }
+
+    .file-upload-area:hover {
+        border-color: #228B22;
+        background: #e8f5f1;
+    }
+
+    .file-upload-area.active {
+        border-color: #228B22;
+        background: #e8f5f1;
+    }
+
+    .file-name {
+        color: #228B22;
+        font-weight: 600;
+        margin-top: 8px;
+    }
+
+    .terms-checkbox {
+        display: flex;
+        align-items: flex-start;
+        gap: 10px;
+        margin-top: 15px;
+        padding: 15px;
+        background: #f0f9f7;
+        border-radius: 6px;
+    }
+
+    .terms-checkbox input {
+        margin-top: 4px;
+        cursor: pointer;
+        width: 18px;
+        height: 18px;
+        accent-color: #228B22;
+    }
+
+    .terms-text {
+        line-height: 1.6;
+        color: #333;
+    }
+
+    .form-buttons {
+        display: flex;
+        justify-content: center;
+        gap: 15px;
+        margin-top: 30px;
+    }
+
+    .row {
+        margin-bottom: 0;
+    }
+
+    /* Ensure file inputs are clickable even when hidden */
+    input[type="file"] {
+        pointer-events: auto !important;
+        cursor: pointer;
+    }
+
+</style>
+
+<div class="registration-container container">
+    <div class="registration-header">
+        <div style="display:flex; align-items: center">
+            <div>
+                <img src="/images/logo2.png" alt="College Logo" style="height: 100px; width: 200px;" />
+            </div>
+            <div style="margin-left:auto; margin-right:auto">
+                <h1>Student Registration Form</h1>
+                <p>Complete your profile to get started</p>
+            </div>
+            <div>
+                <h3>2026-2027</h3>
+            </div>
+        </div>
+    </div>
+
+    <form id="registrationForm" asp-controller="Home" asp-action="Register" method="post" enctype="multipart/form-data" novalidate>
+
+        <!-- Personal Information Section -->
+        <div class="form-section">
+            <h2 class="section-title">Personal Information</h2>
+            <div class="row">
+                <div class="col-md-4 mb-3">
+                    <label for="firstName" class="form-label">First Name <span class="text-danger">*</span></label>
+                    <input type="text" class="form-control" id="firstName" name="firstName" placeholder="Enter first name" maxlength="50" required />
+                    <div class="invalid-feedback">First name is required (max 50 characters)</div>
+                </div>
+                <div class="col-md-4 mb-3">
+                    <label for="middleName" class="form-label">Middle Name <span class="optional-badge">Optional</span></label>
+                    <input type="text" class="form-control" id="middleName" name="middleName" placeholder="Enter middle name" maxlength="50" />
+                </div>
+                <div class="col-md-4 mb-3">
+                    <label for="lastName" class="form-label">Last Name <span class="text-danger">*</span></label>
+                    <input type="text" class="form-control" id="lastName" name="lastName" placeholder="Enter last name" maxlength="50" required />
+                    <div class="invalid-feedback">Last name is required (max 50 characters)</div>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-md-6 mb-3">
+                    <label for="dob" class="form-label">Date of Birth <span class="text-danger">*</span></label>
+                    <input type="date" class="form-control" id="dob" name="dob" required />
+                    <div class="invalid-feedback">You must be at least 18 years old to register</div>
+                </div>
+                <div class="col-md-6 mb-3">
+                    <label for="gender" class="form-label">Gender <span class="text-danger">*</span></label>
+                    <select class="form-select" id="gender" name="gender" required>
+                        <option value="">Select Gender</option>
+                        <option value="male">Male</option>
+                        <option value="female">Female</option>
+                        <option value="other">Other</option>
+                    </select>
+                    <div class="invalid-feedback">Please select a gender</div>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-md-6 mb-3">
+                    <label for="bloodGroup" class="form-label">Blood Group <span class="text-danger">*</span></label>
+                    <select class="form-select" id="bloodGroup" name="bloodGroup" required>
+                        <option value="">Select Blood Group</option>
+                        <option value="O+">O+</option>
+                        <option value="O-">O-</option>
+                        <option value="A+">A+</option>
+                        <option value="A-">A-</option>
+                        <option value="B+">B+</option>
+                        <option value="B-">B-</option>
+                        <option value="AB+">AB+</option>
+                        <option value="AB-">AB-</option>
+                    </select>
+                    <div class="invalid-feedback">Please select a blood group</div>
+                </div>
+                <div class="col-md-6 mb-3">
+                    <label for="nationality" class="form-label">Nationality <span class="text-danger">*</span></label>
+                    <input type="text" class="form-control" id="nationality" name="nationality" placeholder="Enter your nationality" required />
+                    <div class="invalid-feedback">Nationality is required</div>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-md-6 mb-3">
+                    <label for="category" class="form-label">Category <span class="text-danger">*</span></label>
+                    <select class="form-select" id="category" name="category" required>
+                        <option value="">Select Category</option>
+                        <option value="general">General</option>
+                        <option value="obc">OBC</option>
+                        <option value="sc">SC</option>
+                        <option value="st">ST</option>
+                    </select>
+                    <div class="invalid-feedback">Please select a category</div>
+                </div>
+                <div class="col-md-6 mb-3">
+                    <label for="govtId" class="form-label">Government ID (Aadhar/PAN) <span class="text-danger">*</span></label>
+                    <input type="text" class="form-control" id="govtId" name="govtId" placeholder="Enter your government ID" required />
+                    <div class="invalid-feedback">Government ID is required</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Contact Information Section -->
+        <div class="form-section">
+            <h2 class="section-title">Contact Information</h2>
+            <div class="row">
+                <div class="mb-3">
+                    <label for="phone" class="form-label">Phone Number <span class="text-danger">*</span></label>
+                    <input type="tel" class="form-control" id="phone" name="phone" placeholder="Enter your phone number" pattern="[0-9]{10}" required />
+                    <div class="invalid-feedback">Please provide a valid 10-digit phone number</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Address Information Section -->
+        <div class="form-section">
+            <h2 class="section-title">Address Information</h2>
+            <div class="row">
+                <div class="col-md-6 mb-3">
+                    <label for="city" class="form-label">City <span class="text-danger">*</span></label>
+                    <input type="text" class="form-control" id="city" name="city" placeholder="Enter your city" required />
+                    <div class="invalid-feedback">City is required</div>
+                </div>
+                <div class="col-md-3 mb-3">
+                    <label for="state" class="form-label">State <span class="text-danger">*</span></label>
+                    <input type="text" class="form-control" id="state" name="state" placeholder="Enter your state" required />
+                    <div class="invalid-feedback">State is required</div>
+                </div>
+                <div class="col-md-3 mb-3">
+                    <label for="pincode" class="form-label">Pincode <span class="text-danger">*</span></label>
+                    <input type="text" class="form-control" id="pincode" name="pincode" placeholder="Enter pincode" pattern="[0-9]{6}" required />
+                    <div class="invalid-feedback">Please provide a valid 6-digit pincode</div>
+                </div>
+            </div>
+
+            <div class="mb-3">
+                <label for="permanentAddress" class="form-label">Permanent Address <span class="text-danger">*</span></label>
+                <textarea class="form-control" id="permanentAddress" name="permanentAddress" rows="3" placeholder="Enter your permanent address" required></textarea>
+                <div class="invalid-feedback">Permanent address is required</div>
+            </div>
+
+            <div class="mb-3">
+                <label class="address-sync-label">
+                    <input type="checkbox" id="sameAsPermenant" name="sameAsPermenant">
+                    <span>Alternate address same as permanent address</span>
+                </label>
+            </div>
+
+            <div class="mb-3">
+                <label for="alternateAddress" class="form-label">Alternate Address</label>
+                <textarea class="form-control" id="alternateAddress" name="alternateAddress" rows="3" placeholder="Enter your alternate address"></textarea>
+            </div>
+        </div>
+
+        <!-- Parent Information Section -->
+        <div class="form-section">
+            <h2 class="section-title">Parent/Guardian Information</h2>
+            <div class="row">
+                <div class="col-md-6 mb-3">
+                    <label for="parentName" class="form-label">Parent/Guardian Name <span class="text-danger">*</span></label>
+                    <input type="text" class="form-control" id="parentName" name="parentName" placeholder="Enter parent/guardian name" required />
+                    <div class="invalid-feedback">Parent/Guardian name is required</div>
+                </div>
+                <div class="col-md-6 mb-3">
+                    <label for="parentContactNo" class="form-label">Parent/Guardian Contact No <span class="text-danger">*</span></label>
+                    <input type="tel" class="form-control" id="parentContactNo" name="parentContactNo" placeholder="Enter parent contact" pattern="[0-9]{10}" required />
+                    <div class="invalid-feedback">Please provide a valid 10-digit phone number</div>
+                </div>
+            </div>
+
+            <div class="mb-3">
+                <label for="relationWithParent" class="form-label">Relation with Parent/Guardian <span class="text-danger">*</span></label>
+                <select class="form-select" id="relationWithParent" name="relationWithParent" required>
+                    <option value="">Select Relation</option>
+                    <option value="father">Father</option>
+                    <option value="mother">Mother</option>
+                    <option value="guardian">Guardian</option>
+                    <option value="other">Other</option>
+                </select>
+                <div class="invalid-feedback">Please select a relation</div>
+            </div>
+        </div>
+
+        <!-- Academic Information Section -->
+        <div class="form-section">
+            <h2 class="section-title">Academic Information</h2>
+            <div class="row">
+                <div class="col-md-6 mb-3">
+                    <label for="program" class="form-label">Program/Degree <span class="text-danger">*</span></label>
+                    <select class="form-select" id="program" name="program" required>
+                        <option value="">Select Program/Degree</option>
+                        <option value="btech">B.Tech</option>
+                        <option value="bca">BCA</option>
+                        <option value="bsc">B.Sc</option>
+                        <option value="ba">B.A</option>
+                        <option value="bcom">B.Com</option>
+                    </select>
+                    <div class="invalid-feedback">Please select a program/degree</div>
+                </div>
+                <div class="col-md-6 mb-3">
+                    <label for="previousSchoolName" class="form-label">Previous School/College Name <span class="text-danger">*</span></label>
+                    <input type="text" class="form-control" id="previousSchoolName" name="previousSchoolName" placeholder="Enter previous school/college name" required />
+                    <div class="invalid-feedback">School/College name is required</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Account Credentials Section -->
+        <div class="form-section">
+            <h2 class="section-title">Account Credentials</h2>
+            <div class="row">
+                <div class="col-md-6 mb-3">
+                    <label for="username" class="form-label">Username <span class="text-danger">*</span></label>
+                    <input type="text" class="form-control" id="username" name="username" placeholder="Create a username" minlength="4" required />
+                    <div class="invalid-feedback">Username must be at least 4 characters</div>
+                </div>
+                <div class="col-md-6 mb-3">
+                    <label for="email" class="form-label">Email Address <span class="text-danger">*</span></label>
+                    <input type="email" class="form-control" id="email" name="email" placeholder="Enter your email" required />
+                    <div class="invalid-feedback">Please provide a valid email address</div>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-md-6 mb-3">
+                    <label for="password" class="form-label">Password <span class="text-danger">*</span></label>
+                    <input type="password" class="form-control" id="password" name="password" placeholder="Create a strong password" minlength="8" required />
+                    <div class="invalid-feedback">Password must be at least 8 characters</div>
+                    <div class="password-strength" id="passwordStrength"></div>
+                    <small class="d-block text-muted mt-2">
+                        Password must contain: uppercase, lowercase, number, and special character
+                    </small>
+                </div>
+                <div class="col-md-6 mb-3">
+                    <label for="confirmPassword" class="form-label">Confirm Password <span class="text-danger">*</span></label>
+                    <input type="password" class="form-control" id="confirmPassword" name="confirmPassword" placeholder="Confirm your password" required />
+                    <div class="invalid-feedback" id="confirmPasswordFeedback">Passwords do not match</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Documents Upload Section -->
+        <div class="form-section">
+            <h2 class="section-title">Documents Upload</h2>
+            <div class="row">
+                <div class="col-md-6 mb-3">
+                    <label for="class12Marksheet" class="form-label">Class 12 Marksheet (PDF) <span class="text-danger">*</span></label>
+                    <div class="file-upload-area" id="class12Area">
+                        <input type="file" class="form-control" id="class12Marksheet" name="class12Marksheet" accept=".pdf" required style="position: absolute; opacity: 0; width: 0; height: 0; pointer-events: none;" />
+                        <p class="mb-0"><i class="bi bi-cloud-upload"></i> Click to browse or drag PDF here</p>
+                        <small class="text-muted">PDF only, max 5MB</small>
+                        <div class="file-name" id="class12Name"></div>
+                    </div>
+                    <div class="invalid-feedback">Class 12 marksheet is required</div>
+                </div>
+                <div class="col-md-6 mb-3">
+                    <label for="class10Marksheet" class="form-label">Class 10 Marksheet (PDF) <span class="text-danger">*</span></label>
+                    <div class="file-upload-area" id="class10Area">
+                        <input type="file" class="form-control" id="class10Marksheet" name="class10Marksheet" accept=".pdf" required style="position: absolute; opacity: 0; width: 0; height: 0; pointer-events: none;" />
+                        <p class="mb-0"><i class="bi bi-cloud-upload"></i> Click to browse or drag PDF here</p>
+                        <small class="text-muted">PDF only, max 5MB</small>
+                        <div class="file-name" id="class10Name"></div>
+                    </div>
+                    <div class="invalid-feedback">Class 10 marksheet is required</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Profile Picture Section -->
+        <div class="form-section">
+            <h2 class="section-title">Profile Picture</h2>
+            <div class="row">
+                <div class="col-md-6 mb-3">
+                    <label class="form-label">Upload Profile Picture</label>
+                    <div class="file-upload-area" id="profileUploadArea">
+                        <input type="file" class="form-control" id="profileUpload" name="profilePicture" accept=".jpg, .jpeg, .png" style="position: absolute; opacity: 0; width: 0; height: 0; pointer-events: none;" />
+                        <p class="mb-0"><i class="bi bi-image"></i> Click to browse or drag image here</p>
+                        <small class="text-muted">JPG, PNG only, max 5MB</small>
+                        <div class="file-name" id="profileUploadName"></div>
+                    </div>
+                    <img id="profileImage" style="display: none;" />
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label">Capture Profile Picture (Camera)</label>
+                    <div class="camera-container">
+                        <p class="mb-2">
+                            <button type="button" class="btn btn-sm btn-register" id="startCameraBtn">Start Camera</button>
+                            <button type="button" class="btn btn-sm btn-reset" id="stopCameraBtn" style="display: none;">Stop Camera</button>
+                        </p>
+                        <video id="cameraFeed" style="display: none;"></video>
+                        <p>
+                            <button type="button" class="btn btn-sm btn-register" id="capturePhotoBtn" style="display: none;">Capture Photo</button>
+                        </p>
+                        <canvas id="captureCanvas" style="display: none;"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Terms and Conditions Section -->
+        <div class="form-section">
+            <div class="terms-checkbox">
+                <input type="checkbox" id="termsCheckbox" name="agreeTerms" required />
+                <div class="terms-text">
+                    <label for="termsCheckbox" style="cursor: pointer; margin: 0;">
+                        <strong>I agree to the Terms and Conditions</strong>
+                        <p class="small text-muted mt-2">
+                            I hereby declare that the information provided above is true and correct to the best of my knowledge. 
+                            I agree to abide by all the rules and regulations of the institution and the program. 
+                            I also consent to the processing of my personal data as per the privacy policy.
+                        </p>
+                    </label>
+                    <div class="invalid-feedback">You must agree to the terms and conditions</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Form Buttons -->
+        <div class="form-buttons">
+            <button type="submit" class="btn btn-register">Register</button>
+            <button type="reset" class="btn btn-reset">Clear</button>
+        </div>
+    </form>
+</div>
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="~/js/registration-form.js"></script>

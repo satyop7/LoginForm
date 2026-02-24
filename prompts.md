@@ -1,0 +1,4 @@
+**Modify this form into a professional Student Registration form with With White green Theme , use boostrap and jquery library for it. Add the fields which i am going to mention now firstname , middlename(optional) , lastname , date of birth , Gender(dropdown) , blood group(dropdown) , nationality , Category(Dropdown) , GovtID , email , phone , city , State , pincode , permanent address , alternate address(checkbox for getting the permanent address automatically) , Parent Name , parent contact no. , realation with parent , Program/Degree(Dropdown) , Previous school name , Username , password(strong password validation) , confirm password(match with password logic) Terms and conditions(agree check box) , upload PDF for class12 and class10 marksheet(Browse option for localfiles) , profile picture with live camera capture.** 
+
+----------------------------------------------------------------------------------------------------------------------------
+

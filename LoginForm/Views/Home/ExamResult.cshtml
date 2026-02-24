@@ -1,0 +1,43 @@
+﻿@model LoginForm.Models.Result
+
+@{
+    Layout = null;
+}
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Exam Result</title>
+    <style>
+        body { font-family: 'Segoe UI', sans-serif; background-color: #f0fff4; display: flex; justify-content: center; align-items: center; height: 100vh; text-align: center; }
+        .card { background: white; padding: 3rem; border-radius: 12px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); border-top: 6px solid #38a169; }
+        h1 { color: #22543d; }
+        .score { font-size: 2rem; font-weight: bold; margin: 1rem 0; color: #38a169; }
+        .status { padding: 0.5rem 1rem; border-radius: 4px; display: inline-block; font-weight: bold; color: white; }
+        .pass { background-color: #38a169; }
+        .fail { background-color: #e53e3e; }
+    </style>
+</head>
+<body>
+    <div class="card">
+        <h1>Exam Submitted!</h1>
+        <p>Thank you for completing the assessment.</p>
+        
+        <div class="score">
+            Score: @Model.CorrectlyAnswered / @Model.TotalQuestion
+        </div>
+
+        <div>
+            @if(Model.IsPassed)
+            {
+                <span class="status pass">RESULT: PASSED</span>
+            }
+            else
+            {
+                <span class="status fail">RESULT: FAILED</span>
+            }
+        </div>
+        
+        <p style="margin-top: 2rem; color: #718096;">You can now close this tab.</p>
+    </div>
+</body>
+</html>
