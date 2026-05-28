@@ -29,13 +29,6 @@ Manage student data efficiently with a responsive web interface, robust authenti
 - **Frontend**: HTML5, CSS3, JavaScript
 - **Containerization**: Docker
 
----
-
-## 🖥️ Screenshots
-
-<!-- Add your own screenshots below -->
-![Login Page](docs/screenshots/login.png)
-![Dashboard](docs/screenshots/dashboard.png)
 
 ---
 
